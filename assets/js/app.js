@@ -8,7 +8,7 @@ let POST_URL=`${BASE_URL}/posts`;
 const postsForm=document.getElementById('postsForm');
 const titleControl=document.getElementById('title');
 const bodyControl=document.getElementById('body');
-const usrdIdControl=document.getElementById('usrdId');
+const userIdControl=document.getElementById('userId');
 const AddBtn=document.getElementById('AddBtn');
 const spinner=document.getElementById('spinner');
 
@@ -25,12 +25,17 @@ function snackbar (msg, icon) {
     })
 }
 
+function toolTips(){
+
+  $('[data-toggle="tooltip"]').tooltip()
+
+}
 function createPostCard(arr){
     let res=''
     arr.forEach(p=> {
         res+=` <div class="col-md-3 mb-3" id="${p.id}">
                 <div class="card h-100">
-                    <div class="card-header">
+                    <div class="card-header" data-toggle="tooltip" data-placement="top" title="${p.title}">
                         <h3>${p.title}</h3>
                     </div>
                         <div class="card-body">
@@ -38,8 +43,10 @@ function createPostCard(arr){
                         </div>
                    
                     <div class="card-footer d-flex justify-content-between">
-                        <i onclick="onEdit(this)" class="fa-solid fa-pen-to-square fa-2x text-primary"></i>
-                        <i onclick="onDelete(this)" class="fa-solid fa-trash-can fa-2x text-danger"></i>
+                        <i onclick="onEdit(this)" class="fa-solid fa-pen-to-square fa-2x text-primary"
+                        data-toggle="tooltip" data-placement="top" title="Edit Button"></i>
+                        <i onclick="onDelete(this)" class="fa-solid fa-trash-can fa-2x text-danger"
+                        data-toggle="tooltip" data-placement="top" title="Remove Button"></i>
                     </div>
                 </div>
             </div>`
@@ -54,11 +61,15 @@ function onPostSubmit(ele){
     let Post_obj={
         title:titleControl.value,
         body:bodyControl.value,
-        usrdId:usrdIdControl
+        userId:userIdControl.value
     }
 
     let xhr=new XMLHttpRequest();
     xhr.open('POST',POST_URL);
+    xhr.setRequestHeader(
+    'Content-Type',
+    'application/json; charset=UTF-8'
+    );
     xhr.send(JSON.stringify(Post_obj))
     xhr.onload=function(){
         if(xhr.status>=200 && xhr.status <=299){
@@ -71,7 +82,7 @@ function onPostSubmit(ele){
             col.id=res.id
             col.innerHTML=`
                                  <div class="card h-100">
-                                    <div class="card-header">
+                                    <div class="card-header"  data-toggle="tooltip" data-placement="top" title="${Post_obj.title}">
                                         <h3>${Post_obj.title}</h3>
                                     </div>
                                         <div class="card-body">
@@ -79,13 +90,17 @@ function onPostSubmit(ele){
                                         </div>
                                 
                                     <div class="card-footer d-flex justify-content-between">
-                                        <i onclick="onEdit(this)" class="fa-solid fa-pen-to-square fa-2x text-primary"></i>
-                                        <i onclick="onDelete(this)" class="fa-solid fa-trash-can fa-2x text-danger"></i>
+                                        <i onclick="onEdit(this)" class="fa-solid fa-pen-to-square fa-2x text-primary"
+                                        data-toggle="tooltip" data-placement="top" title="Edit Button"></i>
+                                        <i onclick="onDelete(this)" class="fa-solid fa-trash-can fa-2x text-danger"
+                                        data-toggle="tooltip" data-placement="top" title="Remove Button"></i>
                                     </div>
                                 </div>`
             const postContainer=document.getElementById('postContainer')
             postContainer.prepend(col)
+            toolTips()
             spinner.classList.add('d-none')
+            snackbar(`New Post with ${res.id} is created SuccessFully..`,'success')
 
         }
     }
@@ -108,8 +123,9 @@ function fetchPosts(){
             let data = JSON.parse(xhr.response)
 
             postArr = [...data]
-
+            
             createPostCard(data.reverse())
+            toolTips()
             spinner.classList.add('d-none')
 
         } else {
@@ -140,8 +156,12 @@ function onEdit(ele) {
 
             titleControl.value = res.title
             bodyControl.value = res.body
-            usrdIdControl.value = res.usrdId
+            userIdControl.value = res.userId
 
+            postsForm.scrollIntoView({
+                behavior:'smooth',
+                block:'center'
+            })
             AddBtn.classList.add('d-none')
             updatePostBtn.classList.remove('d-none')
         }
@@ -153,7 +173,7 @@ function onUpdatePost() {
     let UPDATE_OBJ = {
         title: titleControl.value,
         body: bodyControl.value,
-        usrd: usrdIdControl.value
+        userId: userIdControl.value
     }
 
     spinner.classList.remove('d-none')
@@ -179,14 +199,26 @@ function onUpdatePost() {
 
             postsForm.reset()
 
-            updateId = null
+            let updatedCard=document.getElementById(updateId);
+            updatedCard.classList.add('heighlight-card')
+
+            updatedCard.scrollIntoView({
+                behavior:'smooth',
+                block:'center'
+            })
+
+            setTimeout(() => {
+                updatedCard.classList.remove('heighlight-card')
+            }, 3000);
 
             AddBtn.classList.remove('d-none')
             updatePostBtn.classList.add('d-none')
 
             spinner.classList.add('d-none')
 
-            snackbar('Post updated successfully !!!', 'success')
+            snackbar(`${updateId} Post updated successfully !!!`, 'success')
+
+
 
         } else {
             spinner.classList.add('d-none')
@@ -230,7 +262,7 @@ function onDelete(ele) {
 
                     spinner.classList.add('d-none')
 
-                    snackbar('Post removed successfully !!!', 'success')
+                    snackbar(`Post with id ${REMOVE_ID} removed successfully !!!`, 'success')
 
                 } else {
                     spinner.classList.add('d-none')

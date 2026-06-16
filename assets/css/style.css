@@ -70,3 +70,11 @@ body{
     width: 4rem;
     height: 4rem;
 }
+
+.heighlight-card .card{
+    background-color: #0d0703;
+    
+}
+.fa-pen-to-square,.fa-trash-can{
+    cursor: pointer;
+}
