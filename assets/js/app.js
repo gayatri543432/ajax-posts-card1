@@ -198,10 +198,17 @@ function onUpdatePost() {
             card.querySelector('p').innerHTML = UPDATE_OBJ.body
 
             postsForm.reset()
+            let header = card.querySelector('.card-header');
 
-            let updatedCard=document.getElementById(updateId);
-            updatedCard.classList.add('heighlight-card')
+            header.setAttribute('title', UPDATE_OBJ.title);
 
+            $(header).tooltip('dispose');
+            $(header).tooltip();
+
+            $(card.querySelector('.card-header')).tooltip('dispose');
+            $(card.querySelector('.card-header')).tooltip();
+
+            let updatedCard=document.getElementById(updateId)
             updatedCard.scrollIntoView({
                 behavior:'smooth',
                 block:'center'
