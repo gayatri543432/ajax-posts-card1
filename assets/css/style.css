@@ -72,7 +72,7 @@ body{
 }
 
 .heighlight-card .card{
-    background-color: #0d0703;
+    border:4px solid white;
     
 }
 .fa-pen-to-square,.fa-trash-can{

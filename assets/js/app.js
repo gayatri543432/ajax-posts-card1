@@ -21,7 +21,7 @@ function snackbar (msg, icon) {
     Swal.fire({
         title: msg,
         icon: icon,
-        timer: 3000
+        timer: 2000
     })
 }
 
@@ -213,6 +213,8 @@ function onUpdatePost() {
                 behavior:'smooth',
                 block:'center'
             })
+
+            updatedCard.classList.add('heighlight-card')
 
             setTimeout(() => {
                 updatedCard.classList.remove('heighlight-card')
